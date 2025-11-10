@@ -1,0 +1,85 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  background-color: #ffffffdd;
+  padding: 40px 30px;
+  max-width: 550px;
+  margin: 50px auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+
+.tagline {
+  font-size: 0.9em;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+input[type="file"] {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+input[type="range"] {
+  width: 80%;
+  margin: 10px 0;
+  accent-color: #6B73FF;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+button {
+  background-color: #6B73FF;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: #000DFF;
+  transform: scale(1.05);
+}
+
+.preview {
+  margin-top: 25px;
+  background-color: #f1f1f1;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+canvas {
+  max-width: 100%;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+footer {
+  margin-top: 30px;
+  font-size: 0.8em;
+  color: #555;
+}
+

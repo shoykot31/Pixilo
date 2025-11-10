@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixilo - Image Compressor</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Pixilo</h1>
+    <p class="tagline">A Project by Nebula Neural</p>
+
+    <input type="file" id="imageInput" accept="image/*">
+    
+    <label for="quality">Compression Quality: <span id="qualityValue">0.7</span></label>
+    <input type="range" id="quality" min="0.1" max="1" step="0.01" value="0.7">
+
+    <div class="preview">
+      <h3>Preview:</h3>
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <button id="downloadBtn">Download Compressed Image</button>
+
+    <footer>
+      &copy; 2025 Pixilo | A Project by Nebula Neural
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
