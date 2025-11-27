@@ -1,35 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pixilo - Image Compressor</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pixilo • Artistic Image Resizer & Compressor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 30%, #bbf7d0 100%);
+  --primary: #22c55e;
+  --primary-dark: #16a34a;
+  --glass: rgba(255, 255, 255, 0.3);
+  --shadow: 0 25px 50px rgba(0,0,0,0.1);
+  --text: #166534;
+  --text-light: #4b8b66;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--bg); min-height:100vh; overflow-x:hidden; color:var(--text); position:relative; }
+
+/* Floating Particles */
+.particle { position:absolute; pointer-events:none; opacity:0.15; animation:float linear infinite; }
+.leaf { width:60px; animation-duration:20s; }
+.petal { width:40px; animation-duration:25s; animation-delay:3s; }
+.butterfly { width:50px; animation-duration:18s; animation-delay:5s; }
+.cloud { width:120px; animation-duration:60s; animation-timing-function:linear; opacity:0.2; }
+
+/* Float Animation */
+@keyframes float {
+  0% { transform: translateY(100vh) rotate(0deg); opacity:0; }
+  10% { opacity:0.15; }
+  90% { opacity:0.15; }
+  100% { transform: translateY(-100px) rotate(360deg); opacity:0; }
+}
+
+@keyframes cloudMove {
+  0% { transform: translateX(-150px); }
+  100% { transform: translateX(120vw); }
+}
+
+/* Container */
+.container { max-width:1100px; margin:0 auto; padding:2rem; position:relative; z-index:10; }
+
+header { text-align:center; margin:3rem 0 4rem; }
+
+h1 {
+  font-family:'Playfair Display',serif;
+  font-size:5.5rem;
+  background:linear-gradient(120deg,#16a34a,#22c55e,#86efac);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 10px 30px rgba(34,197,94,0.3));
+  animation:breathe 6s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{transform:scale(1);} 50%{transform:scale(1.03);} }
+
+p.subtitle { font-size:1.4rem; color:var(--text-light); font-weight:300; margin-top:1rem; }
+
+.card { background: var(--glass); backdrop-filter: blur(20px); border-radius:2.5rem; box-shadow: var(--shadow); padding:3rem; border:1px solid rgba(255,255,255,0.4); }
+
+.mode-tabs { display:flex; background:rgba(255,255,255,0.4); border-radius:50px; padding:8px; margin-bottom:2.5rem; width:fit-content; margin-left:auto; margin-right:auto; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+.tab { padding:14px 32px; border:none; border-radius:50px; font-weight:600; cursor:pointer; transition:all 0.4s ease; background:transparent; color:var(--text-light); }
+.tab.active { background:white; color:var(--text); box-shadow:0 8px 25px rgba(0,0,0,0.15); transform:translateY(-2px); }
+
+.upload-zone { border:3px dashed rgba(34,197,94,0.4); border-radius:2rem; padding:4rem 2rem; text-align:center; transition: all 0.5s ease; background: rgba(255,255,255,0.15); cursor:pointer; margin-bottom:2.5rem; }
+.upload-zone:hover { border-color:var(--primary); background: rgba(74,222,128,0.12); transform:translateY(-8px); }
+.upload-zone.dragover { border-color:var(--primary-dark); background: rgba(34,197,94,0.2); transform:scale(1.03); }
+
+.choose-btn { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color:white; border:none; padding:1.2rem 3rem; border-radius:50px; font-size:1.2rem; font-weight:600; cursor:pointer; box-shadow:0 15px 35px rgba(34,197,94,0.4); transition:all 0.4s ease; margin-top:1rem; }
+.choose-btn:hover { transform:translateY(-5px) scale(1.05); box-shadow:0 25px 50px rgba(34,197,94,0.6); }
+
+#preview { max-width:100%; max-height:550px; border-radius:1.5rem; box-shadow:0 25px 60px rgba(0,0,0,0.2); margin:2rem 0; display:block; }
+
+.controls { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2rem; margin:3rem 0; }
+.control { background:rgba(255,255,255,0.5); padding:1.8rem; border-radius:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.08); }
+label { font-weight:600; margin-bottom:1rem; display:block; color:var(--text); }
+input[type="number"], input[type="range"] { width:100%; margin-top:0.8rem; }
+input[type="number"] { padding:1rem; border:none; border-radius:1rem; background:white; font-size:1.1rem; box-shadow:inset 0 4px 10px rgba(0,0,0,0.05); }
+input[type="range"] { height:12px; border-radius:10px; background:rgba(0,0,0,0.1); outline:none; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:32px; height:32px; border-radius:50%; background:var(--primary); cursor:pointer; box-shadow:0 8px 25px rgba(34,197,94,0.5); }
+
+.size-info { margin-top:1rem; font-size:0.95rem; color:var(--text-light); }
+
+.download-btn { background: linear-gradient(135deg, #16a34a, #22c55e); color:white; border:none; padding:1.4rem 4rem; font-size:1.3rem; font-weight:700; border-radius:50px; cursor:pointer; box-shadow:0 20px 50px rgba(34,197,94,0.5); transition: all 0.5s ease; display:block; margin:3rem auto 1rem; }
+.download-btn:hover:not(:disabled) { transform:translateY(-8px) scale(1.08); box-shadow:0 35px 70px rgba(34,197,94,0.7); }
+.download-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+@media (max-width:768px){ h1{font-size:4rem;} .card{padding:2rem;} .controls{grid-template-columns:1fr;} }
+
+</style>
 </head>
 <body>
-  <div class="container">
+
+<!-- Floating Particles -->
+<div class="particle leaf" style="left:10%;"><img src="https://assets.codepen.io/3833379/leaf1.svg" width="60"></div>
+<div class="particle petal" style="right:15%;"><img src="https://assets.codepen.io/3833379/leaf2.svg" width="50"></div>
+<div class="particle leaf" style="left:20%;"><img src="https://assets.codepen.io/3833379/leaf3.svg" width="70"></div>
+<div class="particle petal" style="right:25%;"><img src="https://assets.codepen.io/3833379/leaf4.svg" width="55"></div>
+<div class="particle butterfly" style="left:5%;"><img src="https://assets.codepen.io/3833379/butterfly.svg" width="50"></div>
+<div class="particle butterfly" style="right:10%;"><img src="https://assets.codepen.io/3833379/butterfly.svg" width="45"></div>
+<div class="particle cloud" style="top:10%; left:-150px;"><img src="https://assets.codepen.io/3833379/cloud.svg" width="120"></div>
+<div class="particle cloud" style="top:25%; left:-200px;"><img src="https://assets.codepen.io/3833379/cloud.svg" width="150"></div>
+
+<div class="container">
+  <header>
     <h1>Pixilo</h1>
-    <p class="tagline">A Project by Nebula Neural</p>
+    <p class="subtitle">Resize • Compress • Beautify — with nature’s touch</p>
+  </header>
 
-    <input type="file" id="imageInput" accept="image/*">
-    
-    <label for="quality">Compression Quality: <span id="qualityValue">0.7</span></label>
-    <input type="range" id="quality" min="0.1" max="1" step="0.01" value="0.7">
-
-    <div class="preview">
-      <h3>Preview:</h3>
-      <canvas id="canvas"></canvas>
+  <div class="card">
+    <div class="mode-tabs">
+      <button class="tab active" data-mode="both">Both</button>
+      <button class="tab" data-mode="resize">Resize Only</button>
+      <button class="tab" data-mode="compress">Compress Only</button>
     </div>
 
-    <button id="downloadBtn">Download Compressed Image</button>
+    <div class="upload-zone" id="dropZone">
+      <p style="font-size:1.3rem; margin-bottom:1rem;">Drop your image here</p>
+      <p style="color:var(--text-light);">or</p>
+      <button class="choose-btn">Choose Image</button>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+    </div>
 
-    <footer>
-      &copy; 2025 Pixilo | A Project by Nebula Neural
-    </footer>
+    <div id="previewContainer" style="text-align:center; display:none;">
+      <img id="preview" src="" alt="Preview">
+    </div>
+
+    <div class="controls" id="controls" style="display:none;">
+      <div class="control">
+        <label>Width (px)</label>
+        <input type="number" id="width" min="1" value="1200">
+      </div>
+      <div class="control">
+        <label>Height (px)</label>
+        <input type="number" id="height" min="1" value="800">
+        <small style="color:var(--text-light);">Aspect ratio preserved</small>
+      </div>
+      <div class="control">
+        <label>Quality: <span id="qualityVal">85</span>%</label>
+        <input type="range" id="quality" min="1" max="100" value="85">
+        <div class="size-info">
+          Original: <strong id="origSize">-</strong> → 
+          New: <strong id="newSize">-</strong> 
+          (<span id="reduction">0%</span> smaller)
+        </div>
+      </div>
+    </div>
+
+    <button class="download-btn" id="downloadBtn" disabled>
+      Download Image
+    </button>
   </div>
+</div>
+<footer>
+  A project of Nebula Neural | Dev: Shoykot
+</footer>
+<script>
+const dropZone=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+const previewContainer=document.getElementById('previewContainer');
+const preview=document.getElementById('preview');
+const controls=document.getElementById('controls');
+const downloadBtn=document.getElementById('downloadBtn');
+const widthInput=document.getElementById('width');
+const heightInput=document.getElementById('height');
+const qualityInput=document.getElementById('quality');
+const qualityVal=document.getElementById('qualityVal');
+const origSize=document.getElementById('origSize');
+const newSize=document.getElementById('newSize');
+const reduction=document.getElementById('reduction');
 
-  <script src="script.js"></script>
+let originalFile=null;
+let originalImage=null;
+let aspectRatio=1;
+let currentMode='both';
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    currentMode=tab.dataset.mode;
+    updateControlsVisibility();
+    processImage();
+  });
+});
+
+function updateControlsVisibility(){
+  if(currentMode==='resize'){ widthInput.parentElement.style.display='block'; heightInput.parentElement.style.display='block'; qualityInput.parentElement.style.display='none'; }
+  else if(currentMode==='compress'){ widthInput.parentElement.style.display='none'; heightInput.parentElement.style.display='none'; qualityInput.parentElement.style.display='block'; }
+  else { widthInput.parentElement.style.display='block'; heightInput.parentElement.style.display='block'; qualityInput.parentElement.style.display='block'; }
+}
+
+dropZone.querySelector('.choose-btn').onclick=()=>fileInput.click();
+fileInput.onchange=e=>{ if(e.target.files[0]) handleFile(e.target.files[0]); };
+['dragenter','dragover'].forEach(evt=>dropZone.addEventListener(evt,e=>{e.preventDefault(); dropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(evt=>dropZone.addEventListener(evt,e=>{e.preventDefault(); dropZone.classList.remove('dragover');}));
+dropZone.addEventListener('drop',e=>{if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);});
+
+function handleFile(file){
+  if(!file.type.startsWith('image/')) return alert("Please select an image file");
+  originalFile=file;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    originalImage=new Image();
+    originalImage.onload=()=>{
+      aspectRatio=originalImage.height/originalImage.width;
+      preview.src=e.target.result;
+      previewContainer.style.display='block';
+      controls.style.display='grid';
+      downloadBtn.disabled=false;
+      widthInput.value=originalImage.width;
+      heightInput.value=originalImage.height;
+      origSize.textContent=formatBytes(file.size);
+      updateControlsVisibility();
+      processImage();
+    };
+    originalImage.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+widthInput.oninput=()=>{ heightInput.value=Math.round(widthInput.value*aspectRatio); processImage(); };
+heightInput.oninput=()=>{ widthInput.value=Math.round(heightInput.value/aspectRatio); processImage(); };
+qualityInput.oninput=()=>{ qualityVal.textContent=qualityInput.value; processImage(); };
+
+function processImage(){
+  if(!originalImage) return;
+  const canvas=document.createElement('canvas');
+  const ctx=canvas.getContext('2d');
+  let w=originalImage.width; let h=originalImage.height; let quality=0.92; let type='image/png';
+
+  if(currentMode==='resize'){ w=parseInt(widthInput.value)||w; h=parseInt(heightInput.value)||h; type='image/png'; }
+  else if(currentMode==='compress'){ quality=qualityInput.value/100; type='image/jpeg'; }
+  else { w=parseInt(widthInput.value)||w; h=parseInt(heightInput.value)||h; quality=qualityInput.value/100; type='image/jpeg'; }
+
+  canvas.width=w; canvas.height=h; ctx.drawImage(originalImage,0,0,w,h);
+  canvas.toBlob(blob=>{
+    newSize.textContent=formatBytes(blob.size);
+    const saved=((originalFile.size-blob.size)/originalFile.size*100).toFixed(1);
+    reduction.textContent = saved>0?saved+'%':'0%';
+    downloadBtn.onclick=()=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=`flora-${Date.now()}.${type==='image/png'?'png':'jpg'}`;
+      a.click();
+    };
+  },type,quality);
+}
+
+function formatBytes(bytes){ if(bytes<1024) return bytes+' B'; if(bytes<1048576) return (bytes/1024).toFixed(1)+' KB'; return (bytes/1048576).toFixed(2)+' MB'; }
+
+qualityVal.textContent=qualityInput.value;
+updateControlsVisibility();
+
+// Cloud animation
+document.querySelectorAll('.cloud').forEach(cloud=>{
+  cloud.style.animationName='cloudMove';
+});
+</script>
 </body>
 </html>
-
